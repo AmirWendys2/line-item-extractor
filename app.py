@@ -7,7 +7,7 @@ import re
 
 # Path to master Excel file (adjust to your local path)
 # Optional: Replace this with your actual SharePoint sync folder path
-MASTER_FILE_PATH = os.path.join(os.getcwd(), "LineItemMaster.xlsx")
+MASTER_FILE_PATH = os.path.join(os.getcwd(), "C:\Users\ARASUC2\Desktop\LineItemMaster.xlsx")
 
 def extract_quotation_date(lines):
     for line in lines:
@@ -57,6 +57,8 @@ st.title("📄 Multi-PDF Line Item Extractor")
 if "uploaded_files" not in st.session_state:
     st.session_state.uploaded_files = []
 
+st.sidebar.info("💬 Any questions or concerns contact Amir Rasul")
+
 if st.button("🧹 Clear All PDFs"):
     st.session_state.uploaded_files = []
     st.session_state.clear_output = True
@@ -71,11 +73,10 @@ uploaded_files = st.file_uploader(
     key="file_uploader" if not st.session_state.get("reset_uploader") else "file_uploader_reset"
 )
 
-# Replace session state with current upload if new ones provided
 if uploaded_files:
     st.session_state.uploaded_files = uploaded_files
 
-append_to_master = st.checkbox("✅ Append to master file on desktop", value=st.session_state.get("append_to_master", False))
+append_to_master = st.checkbox("✅ Append to master file on Amir's desktop", value=st.session_state.get("append_to_master", False))
 st.session_state.append_to_master = append_to_master
 
 # Button to download current master file
@@ -107,12 +108,10 @@ if st.session_state.uploaded_files:
             st.dataframe(final_df)
         st.session_state.clear_output = False
 
-        # Download session report
         output = BytesIO()
         final_df.to_excel(output, index=False)
         st.download_button("📥 Download This Session Report", output.getvalue(), file_name="session_line_items.xlsx")
 
-        # Append to master file if selected
         if append_to_master:
             try:
                 if os.path.exists(MASTER_FILE_PATH):
