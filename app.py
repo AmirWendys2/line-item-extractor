@@ -7,7 +7,7 @@ import re
 
 # Path to master Excel file (adjust to your local path)
 # Optional: Replace this with your actual SharePoint sync folder path
-MASTER_FILE_PATH = os.path.join(os.getcwd(), "C:\Users\ARASUC2\Desktop\LineItemMaster.xlsx")
+MASTER_FILE_PATH = os.path.join(os.getcwd(), "LineItemMaster.xlsx")
 
 def extract_quotation_date(lines):
     for line in lines:
