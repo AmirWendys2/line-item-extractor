@@ -76,7 +76,7 @@ uploaded_files = st.file_uploader(
 if uploaded_files:
     st.session_state.uploaded_files = uploaded_files
 
-append_to_master = st.checkbox("✅ Append to master file on Amir's desktop", value=st.session_state.get("append_to_master", False))
+append_to_master = st.checkbox("✅ Append to master file on desktop", value=st.session_state.get("append_to_master", False))
 st.session_state.append_to_master = append_to_master
 
 # Button to download current master file
