@@ -6,7 +6,7 @@ import os
 import re
 
 # Path to master Excel file (adjust to your local path)
-MASTER_FILE_PATH = os.path.join(os.getcwd(), "LineItemMaster.xlsx")
+MASTER_FILE_PATH = "C:/Users/ARASUC2/OneDrive - Wendy’s Portal/Restaurant and Digital Technology - Amir's Acrelec Master File/LineItemMaster.xlsx"
 
 def extract_quotation_date(lines):
     for line in lines:
