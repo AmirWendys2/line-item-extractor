@@ -6,7 +6,6 @@ import os
 import re
 
 # Path to master Excel file (adjust to your local path)
-# Optional: Replace this with your actual SharePoint sync folder path
 MASTER_FILE_PATH = os.path.join(os.getcwd(), "LineItemMaster.xlsx")
 
 def extract_quotation_date(lines):
@@ -79,15 +78,24 @@ if uploaded_files:
 append_to_master = st.checkbox("✅ Append to master file on desktop", value=st.session_state.get("append_to_master", False))
 st.session_state.append_to_master = append_to_master
 
-# Button to download current master file
-if st.button("📂 Download Current Master File"):
-    if os.path.exists(MASTER_FILE_PATH):
-        master_df = pd.read_excel(MASTER_FILE_PATH)
-        output = BytesIO()
-        master_df.to_excel(output, index=False)
-        st.download_button("⬇️ Click to Download Master File", output.getvalue(), file_name="LineItemMaster.xlsx")
-    else:
-        st.warning("⚠️ Master file not found at the expected location.")
+# Button row for both download buttons
+
+# Always show download buttons at the top if there's previous data
+if "final_df" in st.session_state:
+    final_df = st.session_state.final_df
+    col1, col2 = st.columns(2)
+    with col1:
+        if os.path.exists(MASTER_FILE_PATH):
+            master_df = pd.read_excel(MASTER_FILE_PATH)
+            output_master = BytesIO()
+            master_df.to_excel(output_master, index=False)
+            st.download_button("⬇️ Click to Download Master File", output_master.getvalue(), file_name="LineItemMaster.xlsx", key="master_top")
+        else:
+            st.warning("⚠️ Master file not found at the expected location.")
+    with col2:
+        output_session = BytesIO()
+        final_df.to_excel(output_session, index=False)
+        st.download_button("📥 Download This Session Report", output_session.getvalue(), file_name="session_line_items.xlsx", key="session_top")
 
 if st.session_state.uploaded_files:
     session_dfs = []
@@ -104,13 +112,29 @@ if st.session_state.uploaded_files:
 
     if session_dfs:
         final_df = pd.concat(session_dfs, ignore_index=True)
-        if not st.session_state.get("clear_output"):
-            st.dataframe(final_df)
-        st.session_state.clear_output = False
+        st.session_state.final_df = final_df
 
-        output = BytesIO()
-        final_df.to_excel(output, index=False)
-        st.download_button("📥 Download This Session Report", output.getvalue(), file_name="session_line_items.xlsx")
+        # Button row for both download buttons
+        col1, col2 = st.columns(2)
+        with col1:
+            if os.path.exists(MASTER_FILE_PATH):
+                master_df = pd.read_excel(MASTER_FILE_PATH)
+                output_master = BytesIO()
+                master_df.to_excel(output_master, index=False)
+                st.download_button("⬇️ Click to Download Master File", output_master.getvalue(), file_name="LineItemMaster.xlsx")
+            else:
+                st.warning("⚠️ Master file not found at the expected location.")
+        with col2:
+            output_session = BytesIO()
+            final_df.to_excel(output_session, index=False)
+            st.download_button("📥 Download This Session Report", output_session.getvalue(), file_name="session_line_items.xlsx")
+
+        summary = final_df.groupby("Source File")["Item Number"].count().reset_index()
+        summary.columns = ["PDF File", "Line Items Extracted"]
+        st.markdown("### 📊 Summary by PDF File")
+        st.dataframe(summary)
+
+        st.session_state.clear_output = False
 
         if append_to_master:
             try:
@@ -131,6 +155,7 @@ if st.session_state.uploaded_files:
                 combined_df.to_excel(MASTER_FILE_PATH, index=False)
                 new_records = after_count - before_count
                 st.success(f"✅ Master file updated at: {MASTER_FILE_PATH} — Added {new_records} new records.")
+                st.markdown("---")
             except Exception as e:
                 st.error(f"❌ Failed to update master file: {e}")
     else:
