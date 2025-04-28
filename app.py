@@ -121,13 +121,13 @@ if st.session_state.uploaded_files:
                 master_df = pd.read_excel(MASTER_FILE_PATH)
                 output_master = BytesIO()
                 master_df.to_excel(output_master, index=False)
-                st.download_button("⬇️ Click to Download Master File", output_master.getvalue(), file_name="LineItemMaster.xlsx", key="master_bottom")
+                st.download_button("⬇️ Click to Download Master File", output_master.getvalue(), file_name="LineItemMaster.xlsx")
             else:
                 st.warning("⚠️ Master file not found at the expected location.")
         with col2:
             output_session = BytesIO()
             final_df.to_excel(output_session, index=False)
-            st.download_button("📥 Download This Session Report", output_session.getvalue(), file_name="session_line_items.xlsx", key="session_bottom")
+            st.download_button("📥 Download This Session Report", output_session.getvalue(), file_name="session_line_items.xlsx")
 
         summary = final_df.groupby("Source File")["Item Number"].count().reset_index()
         summary.columns = ["PDF File", "Line Items Extracted"]
@@ -152,7 +152,6 @@ if st.session_state.uploaded_files:
                     before_count = 0
                     after_count = len(combined_df)
 
-                os.makedirs(os.path.dirname(MASTER_FILE_PATH), exist_ok=True)
                 combined_df.to_excel(MASTER_FILE_PATH, index=False)
                 new_records = after_count - before_count
                 st.success(f"✅ Master file updated at: {MASTER_FILE_PATH} — Added {new_records} new records.")
