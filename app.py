@@ -4,8 +4,6 @@ import fitz  # PyMuPDF
 from io import BytesIO
 import os
 import re
-import pytesseract
-pytesseract.pytesseract.tesseract_cmd = r"C:\\Users\\ARASUC2\\Downloads\\tesseract.exe"
 
 # Path to master Excel file (adjust to your local path)
 MASTER_FILE_PATH = "C:\\Users\\ARASUC2\\OneDrive - Wendy’s Portal\\Restaurant and Digital Technology - Amir's Acrelec Master File\\LineItemMaster.xlsx"
