@@ -143,19 +143,6 @@ def parse_pdg_pdf(file, mode="Strict"):
         st.success(f"✅ {len(items)} line items extracted using {mode} mode.")
     return pd.DataFrame(items)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 # --------------------- Streamlit App ---------------------
 st.title("📄 Multi-PDF Line Item Extractor")
 
